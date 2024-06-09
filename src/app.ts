@@ -5,8 +5,9 @@ import mongoose, { ConnectOptions } from 'mongoose';
 import { log4jsconfig } from "./config/log4jsconfig";
 import * as process from "process";
 import { configDotenv } from "dotenv";
-import  {Request, Response} from 'express'
-
+import  {Request, Response} from 'express';
+import swaggerSpec from './swaggerConfig';
+import swaggerUi from 'swagger-ui-express';
 configDotenv();
 
 export default async () => {
@@ -25,6 +26,7 @@ export default async () => {
     next();
   });
 
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   app.get('/', (req: Request,res: Response)=>{req.body;res.status(200).json('Hello!')});
   app.use('/api', routers);
 
@@ -40,7 +42,7 @@ export default async () => {
     useUnifiedTopology: true,
     socketTimeoutMS: 30000,
   } as ConnectOptions);
-  console.log('db connected')
+  console.log('db connected');
 
   return app;
 };
